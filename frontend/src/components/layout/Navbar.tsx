@@ -192,9 +192,9 @@ export default function Navbar() {
                                   </Link>
                                </li>
                                <li>
-                                  <div className="block px-4 py-2 hover:bg-gray-50 transition-colors cursor-pointer text-gray-400">
-                                     Wishlist (Coming Soon)
-                                  </div>
+                                  <Link href="/wishlist" className="block px-4 py-2 hover:bg-gray-50 transition-colors cursor-pointer">
+                                     Wishlist
+                                  </Link>
                                </li>
                                <li>
                                   <div className="block px-4 py-2 hover:bg-gray-50 transition-colors cursor-pointer text-gray-400">

@@ -15,23 +15,45 @@ interface ProductCardProps {
   };
 }
 
+import { useWishlistStore } from '@/store/wishlistStore';
+import { Heart } from 'lucide-react';
+
 export default function ProductCard({ product }: ProductCardProps) {
+  const { isInWishlist, toggleWishlist } = useWishlistStore();
+  const isWishlisted = isInWishlist(product.id);
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent Link navigation
+    e.stopPropagation();
+    toggleWishlist(product.id);
+  };
+
   return (
-    <Link href={`/product/${product.slug || product.id}`} className="block h-full"> 
+    <Link href={`/product/${product.slug || product.id}`} className="block h-full relative group/card"> 
       {/* Fallback to ID if slug missing */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group h-full flex flex-col">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer h-full flex flex-col">
         <div className="aspect-square bg-gray-50 relative overflow-hidden">
            {product.image_url ? (
-             <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+             <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover/card:scale-105 transition-transform duration-500" />
            ) : (
              <div className="absolute inset-0 flex items-center justify-center text-gray-400">
                 <span className="text-xs">No Image</span>
              </div>
            )}
+           
+           {/* Wishlist Button */}
+           <button 
+             onClick={handleToggleWishlist}
+             className="absolute top-2 right-2 p-1.5 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-colors z-10"
+           >
+             <Heart 
+               className={`w-5 h-5 transition-colors ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-gray-400 hover:text-red-500'}`} 
+             />
+           </button>
         </div>
         
         <div className="p-3 flex-1 flex flex-col">
-           <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover:text-unify-green transition-colors mb-1">
+           <h3 className="text-sm font-medium text-gray-900 line-clamp-2 group-hover/card:text-unify-green transition-colors mb-1">
               {product.name}
            </h3>
            

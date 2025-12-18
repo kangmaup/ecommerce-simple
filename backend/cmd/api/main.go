@@ -34,6 +34,7 @@ func main() {
 	cartRepo := repository.NewCartRepository(infrastructure.DB)
 	orderRepo := repository.NewOrderRepository(infrastructure.DB)
 	addressRepo := repository.NewAddressRepository(infrastructure.DB)
+	wishlistRepo := repository.NewWishlistRepository(infrastructure.DB)
 
 	// Services
 	userService := service.NewUserService(userRepo, cfg)
@@ -42,6 +43,7 @@ func main() {
 	cartService := service.NewCartService(cartRepo, productRepo)
 	orderService := service.NewOrderService(orderRepo, cartRepo, productRepo, infrastructure.DB)
 	addressService := service.NewAddressService(addressRepo)
+	wishlistService := service.NewWishlistService(wishlistRepo)
 
 	// Handlers
 	authHandler := handler.NewAuthHandler(userService, cfg)
@@ -50,6 +52,7 @@ func main() {
 	cartHandler := handler.NewCartHandler(cartService)
 	orderHandler := handler.NewOrderHandler(orderService)
 	addressHandler := handler.NewAddressHandler(addressService)
+	wishlistHandler := handler.NewWishlistHandler(wishlistService)
 
 	// Initialize Fiber
 	app := fiber.New(fiber.Config{
@@ -119,6 +122,11 @@ func main() {
 	addresses.Get("/", addressHandler.GetMyAddresses)
 	addresses.Put("/:id", addressHandler.Update)
 	addresses.Delete("/:id", addressHandler.Delete)
+
+	// Wishlist Routes
+	wishlist := api.Group("/wishlist", middleware.AuthMiddleware(cfg))
+	wishlist.Post("/toggle", wishlistHandler.Toggle)
+	wishlist.Get("/", wishlistHandler.GetMyWishlist)
 
 	// Start Server
 	log.Printf("Server starting on port %s", cfg.Server.Port)
