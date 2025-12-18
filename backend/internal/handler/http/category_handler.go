@@ -33,7 +33,7 @@ func (h *CategoryHandler) FindAll(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.JSON(categories)
+	return c.JSON(fiber.Map{"data": categories})
 }
 
 func (h *CategoryHandler) FindByID(c *fiber.Ctx) error {
