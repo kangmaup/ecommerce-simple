@@ -19,7 +19,7 @@ func main() {
 	infrastructure.ConnectDB(cfg)
 
 	fmt.Println("Running Migrations...")
-	err := infrastructure.DB.AutoMigrate(&domain.User{}, &domain.Role{}, &domain.Permission{})
+	err := infrastructure.DB.AutoMigrate(&domain.User{}, &domain.Role{}, &domain.Permission{}, &domain.Category{}, &domain.Product{}, &domain.Cart{}, &domain.CartItem{}, &domain.Order{}, &domain.OrderItem{})
 	if err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/user/go-ecommerce/internal/config"
 	handler "github.com/user/go-ecommerce/internal/handler/http"
+	"github.com/user/go-ecommerce/internal/handler/http/middleware"
 	"github.com/user/go-ecommerce/internal/infrastructure"
 	"github.com/user/go-ecommerce/internal/repository"
 	"github.com/user/go-ecommerce/internal/service"
@@ -28,12 +29,24 @@ func main() {
 
 	// Repositories
 	userRepo := repository.NewUserRepository(infrastructure.DB)
+	categoryRepo := repository.NewCategoryRepository(infrastructure.DB)
+	productRepo := repository.NewProductRepository(infrastructure.DB)
+	cartRepo := repository.NewCartRepository(infrastructure.DB)
+	orderRepo := repository.NewOrderRepository(infrastructure.DB)
 
 	// Services
 	userService := service.NewUserService(userRepo, cfg)
+	categoryService := service.NewCategoryService(categoryRepo)
+	productService := service.NewProductService(productRepo, categoryRepo)
+	cartService := service.NewCartService(cartRepo, productRepo)
+	orderService := service.NewOrderService(orderRepo, cartRepo, productRepo, infrastructure.DB)
 
 	// Handlers
-	authHandler := handler.NewAuthHandler(userService)
+	authHandler := handler.NewAuthHandler(userService, cfg)
+	categoryHandler := handler.NewCategoryHandler(categoryService)
+	productHandler := handler.NewProductHandler(productService)
+	cartHandler := handler.NewCartHandler(cartService)
+	orderHandler := handler.NewOrderHandler(orderService)
 
 	// Initialize Fiber
 	app := fiber.New(fiber.Config{
@@ -43,7 +56,11 @@ func main() {
 	// Middleware
 	app.Use(logger.New())
 	app.Use(recover.New())
-	app.Use(cors.New())
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost:3000,http://localhost:3001",
+		AllowHeaders:     "Origin, Content-Type, Accept, Authorization",
+		AllowCredentials: true,
+	}))
 
 	// Routes
 	app.Get("/health", func(c *fiber.Ctx) error {
@@ -58,6 +75,40 @@ func main() {
 	auth := api.Group("/auth")
 	auth.Post("/register", authHandler.Register)
 	auth.Post("/login", authHandler.Login)
+	auth.Post("/logout", authHandler.Logout)
+
+	// Protected Routes (Require Auth)
+	admin := api.Group("/admin", middleware.AuthMiddleware(cfg)) 
+	admin.Get("/orders", orderHandler.GetAllOrders)
+
+	// Category Routes
+	categories := api.Group("/categories")
+	categories.Get("/", categoryHandler.FindAll)
+	categories.Get("/:id", categoryHandler.FindByID)
+	categories.Post("/", middleware.AuthMiddleware(cfg), categoryHandler.Create)
+	categories.Put("/:id", middleware.AuthMiddleware(cfg), categoryHandler.Update)
+	categories.Delete("/:id", middleware.AuthMiddleware(cfg), categoryHandler.Delete)
+
+	// Product Routes
+	products := api.Group("/products")
+	products.Get("/", productHandler.FindAll)
+	products.Get("/:id", productHandler.FindByID)
+	products.Get("/slug/:slug", productHandler.FindBySlug)
+	products.Post("/", middleware.AuthMiddleware(cfg), productHandler.Create)
+	products.Put("/:id", middleware.AuthMiddleware(cfg), productHandler.Update)
+	products.Delete("/:id", middleware.AuthMiddleware(cfg), productHandler.Delete)
+
+	// Cart Routes
+	cart := api.Group("/cart", middleware.AuthMiddleware(cfg))
+	cart.Get("/", cartHandler.GetCart)
+	cart.Post("/", cartHandler.AddToCart)
+	cart.Put("/items/:id", cartHandler.UpdateItem)
+	cart.Delete("/items/:id", cartHandler.RemoveItem)
+
+	// Order Routes
+	orders := api.Group("/orders", middleware.AuthMiddleware(cfg))
+	orders.Post("/checkout", orderHandler.Checkout)
+	orders.Get("/", orderHandler.GetMyOrders)
 
 	// Start Server
 	log.Printf("Server starting on port %s", cfg.Server.Port)

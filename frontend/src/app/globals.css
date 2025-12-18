@@ -1,26 +1,43 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Tokopedia Colors (Unify v1/v2 inspired) */
+  --color-tokopedia-green: #42b549; /* Main Green */
+  --color-tokopedia-dark-green: #2e9934; /* Hover Green */
+  --color-tokopedia-bg: #f3f4f5; /* Light Gray Background */
+  --color-tokopedia-text: #2c2c2c; /* Main Text */
+  --color-tokopedia-text-muted: #9fa6b0; /* Secondary Text */
+  --color-tokopedia-orange: #ff5722; /* Accents/Sale */
+  --color-tokopedia-red: #d01e1e; /* Error/Alert */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --font-sans: "Open Sans", "Inter", system-ui, sans-serif;
+  
+  --color-unify-green: var(--color-tokopedia-green);
+  --color-unify-dark-green: var(--color-tokopedia-dark-green);
+  --color-unify-bg: var(--color-tokopedia-bg);
+  --color-unify-text: var(--color-tokopedia-text);
+  --color-unify-text-muted: var(--color-tokopedia-text-muted);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-unify-bg);
+  color: var(--color-unify-text);
+  font-family: var(--font-sans);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #dfe1e3;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cdd0d4;
 }

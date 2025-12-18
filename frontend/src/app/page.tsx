@@ -1,64 +1,91 @@
-import Image from "next/image";
+'use client';
+
+import Navbar from '@/components/layout/Navbar';
+import ProductCard from '@/components/product/ProductCard';
+import api from '@/lib/api';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+
+// Define Interface
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  image_url: string;
+}
 
 export default function Home() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+     const fetchProducts = async () => {
+        try {
+           const res = await api.get('/products?limit=10'); // Fetch 10 products
+           setProducts(res.data.data || []);
+        } catch (error) {
+           console.error("Failed to fetch products", error);
+        } finally {
+           setLoading(false);
+        }
+     }
+     fetchProducts();
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <div className="min-h-screen bg-unify-bg text-unify-text font-sans">
+      <Navbar />
+
+      <main className="container mx-auto px-4 lg:px-8 py-6 space-y-8">
+        {/* Banner Section */}
+        <section className="rounded-xl overflow-hidden shadow-sm relative h-[300px] bg-gradient-to-r from-unify-green to-teal-500 flex items-center px-8 sm:px-16">
+           <div className="max-w-xl space-y-4 text-white z-10">
+              <h1 className="text-4xl sm:text-5xl font-bold leading-tight">Belanja Kebutuhan Harian Lebih Hemat</h1>
+              <p className="text-lg opacity-90">Nikmati diskon hingga 50% untuk produk pilihan hari ini.</p>
+              <button className="mt-4 px-6 py-3 bg-white text-unify-dark-green font-bold rounded-lg shadow-lg hover:bg-gray-100 transition-transform hover:-translate-y-0.5">
+                 Belanja Sekarang
+              </button>
+           </div>
+           {/* Decorative circles */}
+           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-16 -mt-16"></div>
+           <div className="absolute bottom-0 left-0 w-40 h-40 bg-black/10 rounded-full blur-2xl -ml-20 -mb-20"></div>
+        </section>
+
+        {/* Categories Section */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+             <h2 className="text-2xl font-bold text-gray-800">Kategori Pilihan</h2>
+             <Link href="/categories" className="text-unify-green font-semibold hover:text-unify-dark-green">Lihat Semua</Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+             {['Elektronik', 'Fashion Pria', 'Fashion Wanita', 'Rumah Tangga', 'Kesehatan', 'Hobi & Mainan'].map((cat, idx) => (
+                <div key={idx} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow cursor-pointer flex flex-col items-center gap-3 text-center group">
+                   <div className="w-16 h-16 rounded-full bg-gray-50 group-hover:bg-green-50 flex items-center justify-center text-unify-green transition-colors">
+                      {/* Placeholder Icon */}
+                      <span className="text-2xl font-bold opacity-50">{cat.charAt(0)}</span>
+                   </div>
+                   <span className="text-sm font-semibold text-gray-700 group-hover:text-unify-green transition-colors">{cat}</span>
+                </div>
+             ))}
+          </div>
+        </section>
+
+        {/* Product Recommendations */}
+        <section>
+           <h2 className="text-2xl font-bold text-gray-800 mb-4">Rekomendasi Untukmu</h2>
+           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+               {loading ? (
+                   Array.from({ length: 5 }).map((_, i) => (
+                       <div key={i} className="h-64 bg-gray-100 rounded-xl animate-pulse"></div>
+                   ))
+               ) : (
+                   products.map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                   ))
+               )}
+           </div>
+        </section>
       </main>
     </div>
   );

@@ -1,7 +1,13 @@
-# Project Context
+# Project Context: Go-Rest-Api (Tokopedia Upgrade)
 
-## Project Goal
-Build a simple e-commerce system consisting of a REST API backend and a server-side rendered frontend.
+## 1. Project Overview
+A professional E-Commerce platform aiming to replicate the core experience of Tokopedia (Indonesia's leading marketplace). The system is divided into a public **Storefront** (Buyer) and a secure **Dashboard** (Admin/Seller).
+
+## 2. Key Objectives
+*   **Modern UX**: Tokopedia-like "Unify" design system, responsive, high-performance.
+*   **Robust Security**: HTTP-Only Cookies, RBAC, Secure Transaction Flow.
+*   **Scalable Backend**: Go Fiber with Clean Architecture.
+*   **Feature Parity**: Product Variants, Cart, Checkout, Order Status Tracking.
 
 ## Tech Stack
 - **Languages**: Go, TypeScript/JavaScript
