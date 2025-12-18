@@ -33,6 +33,7 @@ func main() {
 	productRepo := repository.NewProductRepository(infrastructure.DB)
 	cartRepo := repository.NewCartRepository(infrastructure.DB)
 	orderRepo := repository.NewOrderRepository(infrastructure.DB)
+	addressRepo := repository.NewAddressRepository(infrastructure.DB)
 
 	// Services
 	userService := service.NewUserService(userRepo, cfg)
@@ -40,6 +41,7 @@ func main() {
 	productService := service.NewProductService(productRepo, categoryRepo)
 	cartService := service.NewCartService(cartRepo, productRepo)
 	orderService := service.NewOrderService(orderRepo, cartRepo, productRepo, infrastructure.DB)
+	addressService := service.NewAddressService(addressRepo)
 
 	// Handlers
 	authHandler := handler.NewAuthHandler(userService, cfg)
@@ -47,6 +49,7 @@ func main() {
 	productHandler := handler.NewProductHandler(productService)
 	cartHandler := handler.NewCartHandler(cartService)
 	orderHandler := handler.NewOrderHandler(orderService)
+	addressHandler := handler.NewAddressHandler(addressService)
 
 	// Initialize Fiber
 	app := fiber.New(fiber.Config{
@@ -109,6 +112,13 @@ func main() {
 	orders := api.Group("/orders", middleware.AuthMiddleware(cfg))
 	orders.Post("/checkout", orderHandler.Checkout)
 	orders.Get("/", orderHandler.GetMyOrders)
+
+	// Address Routes
+	addresses := api.Group("/addresses", middleware.AuthMiddleware(cfg))
+	addresses.Post("/", addressHandler.Create)
+	addresses.Get("/", addressHandler.GetMyAddresses)
+	addresses.Put("/:id", addressHandler.Update)
+	addresses.Delete("/:id", addressHandler.Delete)
 
 	// Start Server
 	log.Printf("Server starting on port %s", cfg.Server.Port)
