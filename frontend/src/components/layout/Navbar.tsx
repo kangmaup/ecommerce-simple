@@ -13,6 +13,10 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const router = useRouter(); // Need to import useRouter
+  
+  // Hooks must be at the top level
+  const items = useCartStore((state) => state.items);
+  const totalDiffItems = useCartStore((state) => state.totalDiffItems);
 
   const handleLogout = async () => {
     try {
@@ -66,7 +70,7 @@ export default function Navbar() {
            >
              <Link href="/cart" className="p-2 hover:bg-gray-50 rounded-lg text-gray-600 hover:text-unify-green transition-colors relative block">
                 <ShoppingCart className="h-6 w-6" />
-                {useCartStore((state) => state.totalDiffItems) > 0 && (
+                {totalDiffItems > 0 && (
                    <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full border border-white"></span>
                 )}
              </Link>
@@ -75,11 +79,11 @@ export default function Navbar() {
              <div className="absolute right-0 top-full pt-2 w-[400px] hidden group-hover:block z-50">
                 <div className="bg-white rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.12)] border border-gray-100 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                    <div className="p-4 flex items-center justify-between border-b border-gray-50 bg-white">
-                      <h4 className="font-bold text-gray-700">Keranjang ({useCartStore((state) => state.totalDiffItems)})</h4>
+                      <h4 className="font-bold text-gray-700">Keranjang ({totalDiffItems})</h4>
                       <Link href="/cart" className="text-unify-green font-bold text-sm hover:underline">Lihat</Link>
                    </div>
                    
-                   {useCartStore((state) => state.items).length === 0 ? (
+                   {items.length === 0 ? (
                       // Empty State (Matches Image)
                       <div className="p-8 flex flex-col items-center justify-center text-center bg-white">
                           <img 
@@ -103,7 +107,7 @@ export default function Navbar() {
                    ) : (
                       // Filled State
                       <div className="max-h-[300px] overflow-y-auto bg-white">
-                         {useCartStore((state) => state.items).slice(0, 3).map((item) => (
+                         {items.slice(0, 3).map((item) => (
                             <div key={item.id} className="p-4 border-b border-gray-50 flex gap-3 hover:bg-gray-50 transition-colors">
                                <div className="w-12 h-12 bg-gray-100 rounded-md overflow-hidden flex-shrink-0">
                                   <img src={item.product.image_url || '/placeholder.png'} alt={item.product.name} className="w-full h-full object-cover" />
@@ -117,11 +121,11 @@ export default function Navbar() {
                                </div>
                             </div>
                          ))}
-                         {useCartStore((state) => state.items).length > 3 && (
-                            <div className="p-3 text-center text-xs text-gray-400 bg-gray-50">
-                               {useCartStore((state) => state.items).length - 3} barang lainnya...
-                            </div>
-                         )}
+                          {items.length > 3 && (
+                             <div className="p-3 text-center text-xs text-gray-400 bg-gray-50">
+                                {items.length - 3} barang lainnya...
+                             </div>
+                          )}
                       </div>
                    )}
                 </div>

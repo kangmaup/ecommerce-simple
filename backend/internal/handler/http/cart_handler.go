@@ -16,6 +16,14 @@ func NewCartHandler(service service.CartService) *CartHandler {
 	return &CartHandler{service: service}
 }
 
+// GetCart godoc
+// @Summary Get user cart
+// @Description Retrieve the current user's shopping cart
+// @Tags cart
+// @Produce json
+// @Success 200 {object} domain.Cart
+// @Failure 500 {object} map[string]interface{}
+// @Router /cart [get]
 func (h *CartHandler) GetCart(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 	// UserID in JWTClaims is already uuid.UUID, no need to parse
@@ -29,6 +37,18 @@ func (h *CartHandler) GetCart(c *fiber.Ctx) error {
 	return c.JSON(cart)
 }
 
+// AddToCart godoc
+// @Summary Add item to cart
+// @Description Add a product to the user's cart
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param request body domain.AddToCartRequest true "Add To Cart Request"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /cart [post]
 func (h *CartHandler) AddToCart(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 	userID := user.UserID
@@ -51,6 +71,18 @@ func (h *CartHandler) AddToCart(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Item added to cart"})
 }
 
+// UpdateItem godoc
+// @Summary Update cart item
+// @Description Update quantity of an item in the cart
+// @Tags cart
+// @Accept json
+// @Produce json
+// @Param id path string true "Item ID"
+// @Param request body domain.UpdateCartItemRequest true "Update Cart Item Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /cart/items/{id} [put]
 func (h *CartHandler) UpdateItem(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 	userID := user.UserID
@@ -73,6 +105,16 @@ func (h *CartHandler) UpdateItem(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"message": "Cart item updated"})
 }
 
+// RemoveItem godoc
+// @Summary Remove item from cart
+// @Description Remove an item from the cart by ID
+// @Tags cart
+// @Produce json
+// @Param id path string true "Item ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /cart/items/{id} [delete]
 func (h *CartHandler) RemoveItem(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 	userID := user.UserID

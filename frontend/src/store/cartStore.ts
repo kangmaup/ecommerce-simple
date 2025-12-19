@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import api from '@/lib/api';
+import { useAuthStore } from './authStore';
 
 interface CartItem {
   id: string;
@@ -26,6 +27,9 @@ export const useCartStore = create<CartState>((set) => ({
   totalDiffItems: 0,
   isLoading: false,
   fetchCart: async () => {
+    const { isAuthenticated } = useAuthStore.getState();
+    if (!isAuthenticated) return;
+
     set({ isLoading: true });
     try {
       const res = await api.get('/cart');

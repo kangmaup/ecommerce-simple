@@ -16,6 +16,17 @@ func NewAddressHandler(service service.AddressService) *AddressHandler {
 	return &AddressHandler{service: service}
 }
 
+// Create godoc
+// @Summary Create address
+// @Description Create a new shipping address
+// @Tags address
+// @Accept json
+// @Produce json
+// @Param request body domain.CreateAddressRequest true "Create Address Request"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /addresses [post]
 func (h *AddressHandler) Create(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 
@@ -37,6 +48,14 @@ func (h *AddressHandler) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Address created successfully"})
 }
 
+// GetMyAddresses godoc
+// @Summary Get user addresses
+// @Description Get all addresses for the current user
+// @Tags address
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /addresses [get]
 func (h *AddressHandler) GetMyAddresses(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 
@@ -48,6 +67,20 @@ func (h *AddressHandler) GetMyAddresses(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"data": addresses})
 }
 
+// Update godoc
+// @Summary Update address
+// @Description Update an existing address by ID
+// @Tags address
+// @Accept json
+// @Produce json
+// @Param id path string true "Address ID"
+// @Param request body domain.UpdateAddressRequest true "Update Address Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 403 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /addresses/{id} [put]
 func (h *AddressHandler) Update(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 
@@ -76,6 +109,18 @@ func (h *AddressHandler) Update(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "Address updated successfully"})
 }
 
+// Delete godoc
+// @Summary Delete address
+// @Description Delete an address by ID
+// @Tags address
+// @Produce json
+// @Param id path string true "Address ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 403 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /addresses/{id} [delete]
 func (h *AddressHandler) Delete(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 

@@ -14,6 +14,15 @@ func NewOrderHandler(service service.OrderService) *OrderHandler {
 	return &OrderHandler{service: service}
 }
 
+// Checkout godoc
+// @Summary Checkout cart
+// @Description Create an order from the current cart
+// @Tags orders
+// @Produce json
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /orders/checkout [post]
 func (h *OrderHandler) Checkout(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 	userID := user.UserID
@@ -34,6 +43,14 @@ func (h *OrderHandler) Checkout(c *fiber.Ctx) error {
 	})
 }
 
+// GetMyOrders godoc
+// @Summary Get user orders
+// @Description Retrieve a list of the current user's orders
+// @Tags orders
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /orders [get]
 func (h *OrderHandler) GetMyOrders(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 	userID := user.UserID
@@ -46,6 +63,14 @@ func (h *OrderHandler) GetMyOrders(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"data": orders})
 }
 
+// GetAllOrders godoc
+// @Summary Get all orders
+// @Description Retrieve a list of all orders (Admin only)
+// @Tags orders
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /admin/orders [get]
 func (h *OrderHandler) GetAllOrders(c *fiber.Ctx) error {
 	orders, err := h.service.GetAllOrders(c.Context())
 	if err != nil {

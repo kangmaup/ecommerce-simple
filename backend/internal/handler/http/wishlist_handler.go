@@ -14,6 +14,17 @@ func NewWishlistHandler(service domain.WishlistService) *WishlistHandler {
 	return &WishlistHandler{service: service}
 }
 
+// Toggle godoc
+// @Summary Toggle wishlist
+// @Description Add or remove an item from the wishlist
+// @Tags wishlist
+// @Accept json
+// @Produce json
+// @Param request body domain.ToggleWishlistRequest true "Toggle Wishlist Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /wishlist/toggle [post]
 func (h *WishlistHandler) Toggle(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 
@@ -30,6 +41,14 @@ func (h *WishlistHandler) Toggle(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "Success", "action": action})
 }
 
+// GetMyWishlist godoc
+// @Summary Get user wishlist
+// @Description Retrieve the current user's wishlist items
+// @Tags wishlist
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /wishlist [get]
 func (h *WishlistHandler) GetMyWishlist(c *fiber.Ctx) error {
 	user := c.Locals("user").(*utils.JWTClaims)
 

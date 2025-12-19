@@ -54,7 +54,7 @@ type JWTConfig struct {
 				Expiry: getEnv("JWT_EXPIRY", "24h"),
 			},
 			Cookie: CookieConfig{
-				Domain:   getEnv("COOKIE_DOMAIN", "localhost"),
+				Domain:   getEnv("COOKIE_DOMAIN", ""),
 				Secure:   getEnv("COOKIE_SECURE", "false") == "true",
 				HTTPOnly: getEnv("COOKIE_HTTP_ONLY", "true") == "true",
 				SameSite: getEnv("COOKIE_SAME_SITE", "Lax"),

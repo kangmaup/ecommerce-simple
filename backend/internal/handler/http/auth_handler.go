@@ -31,6 +31,18 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
+// Register godoc
+// @Summary Register a new user
+// @Description Register a new user with name, email, and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body RegisterRequest true "Register Request"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 409 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /auth/register [post]
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -47,6 +59,18 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "User created successfully"})
 }
 
+// Login godoc
+// @Summary Login user
+// @Description Login with email and password to receive a JWT token in cookie
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body LoginRequest true "Login Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -93,6 +117,13 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
     })
 }
 
+// Logout godoc
+// @Summary Logout user
+// @Description Clear the JWT authentication cookie
+// @Tags auth
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Router /auth/logout [post]
 func (h *AuthHandler) Logout(c *fiber.Ctx) error {
 	cookie := new(fiber.Cookie)
 	cookie.Name = "token"

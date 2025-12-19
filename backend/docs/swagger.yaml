@@ -1,0 +1,862 @@
+basePath: /api
+definitions:
+  domain.AddToCartRequest:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  domain.Cart:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      items:
+        items:
+          $ref: '#/definitions/domain.CartItem'
+        type: array
+      updated_at:
+        type: string
+      user_id:
+        description: One cart per user
+        type: string
+    type: object
+  domain.CartItem:
+    properties:
+      cart_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      product:
+        $ref: '#/definitions/domain.Product'
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  domain.Category:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      slug:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  domain.CreateAddressRequest:
+    properties:
+      city:
+        type: string
+      is_primary:
+        type: boolean
+      phone_number:
+        type: string
+      recipient_name:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      zip_code:
+        type: string
+    required:
+    - city
+    - phone_number
+    - recipient_name
+    - state
+    - street
+    - zip_code
+    type: object
+  domain.CreateCategoryRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  domain.Product:
+    properties:
+      category:
+        $ref: '#/definitions/domain.Category'
+      category_id:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      slug:
+        type: string
+      stock:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  domain.ToggleWishlistRequest:
+    properties:
+      product_id:
+        type: string
+    required:
+    - product_id
+    type: object
+  domain.UpdateAddressRequest:
+    properties:
+      city:
+        type: string
+      is_primary:
+        description: Pointer to distinguish false vs nil
+        type: boolean
+      phone_number:
+        type: string
+      recipient_name:
+        type: string
+      state:
+        type: string
+      street:
+        type: string
+      zip_code:
+        type: string
+    type: object
+  domain.UpdateCartItemRequest:
+    properties:
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - quantity
+    type: object
+  handler.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handler.RegisterRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+host: 127.0.0.1:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+  description: This is a sample server for an ecommerce API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Go Ecommerce API
+  version: "1.0"
+paths:
+  /addresses:
+    get:
+      description: Get all addresses for the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user addresses
+      tags:
+      - address
+    post:
+      consumes:
+      - application/json
+      description: Create a new shipping address
+      parameters:
+      - description: Create Address Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create address
+      tags:
+      - address
+  /addresses/{id}:
+    delete:
+      description: Delete an address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete address
+      tags:
+      - address
+    put:
+      consumes:
+      - application/json
+      description: Update an existing address by ID
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Address Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateAddressRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update address
+      tags:
+      - address
+  /admin/orders:
+    get:
+      description: Retrieve a list of all orders (Admin only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all orders
+      tags:
+      - orders
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login with email and password to receive a JWT token in cookie
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login user
+      tags:
+      - auth
+  /auth/logout:
+    post:
+      description: Clear the JWT authentication cookie
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Logout user
+      tags:
+      - auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with name, email, and password
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - auth
+  /cart:
+    get:
+      description: Retrieve the current user's shopping cart
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Cart'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user cart
+      tags:
+      - cart
+    post:
+      consumes:
+      - application/json
+      description: Add a product to the user's cart
+      parameters:
+      - description: Add To Cart Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.AddToCartRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Add item to cart
+      tags:
+      - cart
+  /cart/items/{id}:
+    delete:
+      description: Remove an item from the cart by ID
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Remove item from cart
+      tags:
+      - cart
+    put:
+      consumes:
+      - application/json
+      description: Update quantity of an item in the cart
+      parameters:
+      - description: Item ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Cart Item Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UpdateCartItemRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update cart item
+      tags:
+      - cart
+  /categories:
+    get:
+      description: Retrieve a list of all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all categories
+      tags:
+      - categories
+    post:
+      consumes:
+      - application/json
+      description: Create a new category (Admin only)
+      parameters:
+      - description: Create Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new category
+      tags:
+      - categories
+  /categories/{id}:
+    delete:
+      description: Delete a category by ID (Admin only)
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a category
+      tags:
+      - categories
+    get:
+      description: Get details of a specific category
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Category'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get category by ID
+      tags:
+      - categories
+    put:
+      consumes:
+      - application/json
+      description: Update an existing category by ID (Admin only)
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update Category Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.CreateCategoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update a category
+      tags:
+      - categories
+  /orders:
+    get:
+      description: Retrieve a list of the current user's orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user orders
+      tags:
+      - orders
+  /orders/checkout:
+    post:
+      description: Create an order from the current cart
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Checkout cart
+      tags:
+      - orders
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of products with pagination and filtering
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Page size
+        in: query
+        name: limit
+        type: integer
+      - description: Search term
+        in: query
+        name: search
+        type: string
+      - description: Category ID
+        in: query
+        name: category_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get all products
+      tags:
+      - products
+  /products/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get detailed information of a product by its UUID
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get product by ID
+      tags:
+      - products
+  /wishlist:
+    get:
+      description: Retrieve the current user's wishlist items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get user wishlist
+      tags:
+      - wishlist
+  /wishlist/toggle:
+    post:
+      consumes:
+      - application/json
+      description: Add or remove an item from the wishlist
+      parameters:
+      - description: Toggle Wishlist Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ToggleWishlistRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Toggle wishlist
+      tags:
+      - wishlist
+swagger: "2.0"

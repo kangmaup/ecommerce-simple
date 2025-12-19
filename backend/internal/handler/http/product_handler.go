@@ -28,6 +28,19 @@ func (h *ProductHandler) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": "Product created successfully"})
 }
 
+// FindAll godoc
+// @Summary Get all products
+// @Description Get a list of products with pagination and filtering
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param page query int false "Page number"
+// @Param limit query int false "Page size"
+// @Param search query string false "Search term"
+// @Param category_id query string false "Category ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /products [get]
 func (h *ProductHandler) FindAll(c *fiber.Ctx) error {
 	page := c.QueryInt("page", 1)
 	limit := c.QueryInt("limit", 10)
@@ -56,6 +69,17 @@ func (h *ProductHandler) FindAll(c *fiber.Ctx) error {
 	})
 }
 
+// FindByID godoc
+// @Summary Get product by ID
+// @Description Get detailed information of a product by its UUID
+// @Tags products
+// @Accept json
+// @Produce json
+// @Param id path string true "Product ID"
+// @Success 200 {object} domain.Product
+// @Failure 404 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /products/{id} [get]
 func (h *ProductHandler) FindByID(c *fiber.Ctx) error {
 	idStr := c.Params("id")
 	id, err := uuid.Parse(idStr)
