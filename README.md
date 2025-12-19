@@ -11,8 +11,30 @@ A full-stack e-commerce application built with **Go** (Fiber v2) for the backend
 - Go 1.23+
 - Node.js 18+
 - PostgreSQL
+- [Swagger CLI](https://github.com/swaggo/swag) (for API Config)
 
-## Getting Started
+## Quick Setup (Recommended)
+This project includes setup scripts to automate dependency installation and configuration.
+
+### Windows (PowerShell)
+```powershell
+.\setup.ps1
+```
+
+### macOS / Linux
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+These scripts will:
+- Install Go and Node.js if missing
+- Setup Backend (deps, Swagger docs, .env)
+- Setup Frontend (deps)
+
+---
+
+## Manual Setup
 
 ### 1. Database Setup
 Create a PostgreSQL database named `db-ecommerce` (or match what is in your `.env`).
